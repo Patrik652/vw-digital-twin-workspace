@@ -43,3 +43,6 @@ secrets/
 
 # Worktrees
 .worktrees/
+
+# Virtualenv
+.venv/
