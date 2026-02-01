@@ -27,3 +27,15 @@ class SimulatorConfig:
             min_spindle_rpm=int(os.getenv("CNC_MIN_SPINDLE_RPM", cls.min_spindle_rpm)),
             ambient_temp_c=float(os.getenv("CNC_AMBIENT_TEMP_C", cls.ambient_temp_c)),
         )
+
+
+@dataclass(frozen=True)
+class MqttConfig:
+    """MQTT configuration values."""
+
+    broker_host: str = os.getenv("MQTT_BROKER", "localhost")
+    broker_port: int = int(os.getenv("MQTT_PORT", "1883"))
+    use_tls: bool = os.getenv("MQTT_USE_TLS", "false").lower() in {"1", "true", "yes"}
+    cert_path: str | None = os.getenv("MQTT_CERT_PATH")
+    key_path: str | None = os.getenv("MQTT_KEY_PATH")
+    ca_path: str | None = os.getenv("MQTT_CA_PATH")
