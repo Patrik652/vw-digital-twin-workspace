@@ -1,0 +1,7 @@
+# Dev overrides
+anomaly-detection:
+  replicaCount: 1
+predictive-maintenance:
+  replicaCount: 1
+digital-twin-api:
+  replicaCount: 1

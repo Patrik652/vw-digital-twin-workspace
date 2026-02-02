@@ -1,0 +1,11 @@
+# Prod overrides
+anomaly-detection:
+  replicaCount: 2
+predictive-maintenance:
+  replicaCount: 2
+alerting-service:
+  replicaCount: 2
+digital-twin-api:
+  replicaCount: 3
+data-aggregator:
+  replicaCount: 2

@@ -1,0 +1,23 @@
+apiVersion: v2
+name: digital-twin
+description: Umbrella chart for VW Digital Twin services
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+
+dependencies:
+  - name: anomaly-detection
+    version: 0.1.0
+    repository: "file://../anomaly-detection"
+  - name: predictive-maintenance
+    version: 0.1.0
+    repository: "file://../predictive-maintenance"
+  - name: alerting-service
+    version: 0.1.0
+    repository: "file://../alerting-service"
+  - name: digital-twin-api
+    version: 0.1.0
+    repository: "file://../digital-twin-api"
+  - name: data-aggregator
+    version: 0.1.0
+    repository: "file://../data-aggregator"

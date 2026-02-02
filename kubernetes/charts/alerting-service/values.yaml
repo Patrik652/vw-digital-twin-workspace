@@ -1,0 +1,25 @@
+replicaCount: 2
+image:
+  repository: ""
+  tag: "latest"
+  pullPolicy: IfNotPresent
+resources:
+  limits:
+    cpu: "500m"
+    memory: "512Mi"
+  requests:
+    cpu: "100m"
+    memory: "128Mi"
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilization: 70
+serviceAccount:
+  create: true
+  annotations:
+    eks.amazonaws.com/role-arn: ""
+env: []
+secrets: []
+service:
+  port: 8000
