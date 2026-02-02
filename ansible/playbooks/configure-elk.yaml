@@ -1,0 +1,5 @@
+- name: Configure OpenSearch
+  hosts: all
+  become: true
+  roles:
+    - elasticsearch

@@ -1,0 +1,10 @@
+- name: Install Docker
+  package:
+    name: docker.io
+    state: present
+
+- name: Ensure Docker running
+  service:
+    name: docker
+    state: started
+    enabled: true

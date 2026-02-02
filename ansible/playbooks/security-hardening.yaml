@@ -1,0 +1,11 @@
+- name: Security hardening
+  hosts: all
+  become: true
+  tasks:
+    - name: Ensure ufw is installed
+      package:
+        name: ufw
+        state: present
+    - name: Enable ufw
+      command: ufw enable
+      ignore_errors: true
