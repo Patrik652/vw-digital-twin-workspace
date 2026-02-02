@@ -51,6 +51,30 @@ Environment variables:
 
 ## Services
 
+
+## Demo Steps
+
+1. Start the stack:
+
+```bash
+docker compose up --build
+```
+
+2. Check health endpoints:
+
+```bash
+curl http://localhost:8000/health
+curl http://localhost:8001/health
+curl http://localhost:8002/health
+```
+
+3. (Optional) Connect to the WebSocket:
+
+```bash
+# Example using wscat
+wscat -c ws://localhost:8000/ws/machines/CNC-001/telemetry
+```
+
 - **Anomaly Detection**: `http://localhost:8001/health`
 - **Predictive Maintenance**: `http://localhost:8002/health`
 - **Digital Twin API**: `http://localhost:8000/health`
