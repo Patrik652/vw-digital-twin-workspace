@@ -1,0 +1,22 @@
+platform: linux
+image_resource:
+  type: registry-image
+  source:
+    repository: python
+    tag: "3.11"
+inputs:
+  - name: source-code
+run:
+  path: bash
+  args:
+    - -c
+    - |
+      cd source-code
+      pip install -r simulator/requirements.txt
+      pip install -r services/anomaly-detection/requirements.txt
+      pip install -r services/predictive-maintenance/requirements.txt
+      pip install -r services/digital-twin-api/requirements.txt
+      pytest simulator/tests -v
+      pytest services/anomaly-detection/tests -v
+      pytest services/predictive-maintenance/tests -v
+      pytest services/digital-twin-api/tests -v

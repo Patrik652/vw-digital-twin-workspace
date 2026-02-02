@@ -1,0 +1,13 @@
+platform: linux
+image_resource:
+  type: registry-image
+  source:
+    repository: docker
+inputs:
+  - name: source-code
+run:
+  path: sh
+  args:
+    - -c
+    - |
+      echo "Build images placeholder"

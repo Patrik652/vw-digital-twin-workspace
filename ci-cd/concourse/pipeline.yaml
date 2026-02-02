@@ -1,0 +1,51 @@
+resources:
+  - name: source-code
+    type: git
+    source:
+      uri: ((git_uri))
+      branch: main
+
+  - name: terraform-state
+    type: s3
+    source:
+      bucket: ((tf_state_bucket))
+      region: ((aws_region))
+      access_key_id: ((aws_access_key_id))
+      secret_access_key: ((aws_secret_access_key))
+
+  - name: slack-notification
+    type: slack-alert
+    source:
+      url: ((slack_webhook))
+
+jobs:
+  - name: test-and-build
+    plan:
+      - get: source-code
+      - task: run-tests
+        file: source-code/ci-cd/concourse/tasks/run-tests.yaml
+      - task: build-image
+        file: source-code/ci-cd/concourse/tasks/build-image.yaml
+
+  - name: deploy-dev
+    plan:
+      - get: source-code
+        passed: [test-and-build]
+        trigger: true
+      - task: deploy-helm
+        file: source-code/ci-cd/concourse/tasks/deploy-helm.yaml
+
+  - name: terraform-plan
+    plan:
+      - get: source-code
+        trigger: true
+      - task: terraform-plan
+        file: source-code/ci-cd/concourse/tasks/terraform-plan.yaml
+
+  - name: terraform-apply
+    plan:
+      - get: source-code
+        passed: [terraform-plan]
+        trigger: false
+      - task: terraform-apply
+        file: source-code/ci-cd/concourse/tasks/terraform-apply.yaml

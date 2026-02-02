@@ -1,0 +1,16 @@
+platform: linux
+image_resource:
+  type: registry-image
+  source:
+    repository: hashicorp/terraform
+    tag: "1.6"
+inputs:
+  - name: source-code
+run:
+  path: sh
+  args:
+    - -c
+    - |
+      cd source-code/terraform/environments/dev
+      terraform init -backend-config=backend.hcl
+      terraform apply -auto-approve

@@ -1,0 +1,13 @@
+platform: linux
+image_resource:
+  type: registry-image
+  source:
+    repository: alpine/helm
+inputs:
+  - name: source-code
+run:
+  path: sh
+  args:
+    - -c
+    - |
+      echo "helm upgrade --install digital-twin"
