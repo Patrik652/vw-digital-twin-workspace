@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install tooling
+        run: pip install black flake8 isort
+      - name: Lint
+        run: |
+          black --check .
+          isort --check-only .
+          flake8 .
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install deps
+        run: |
+          pip install -r simulator/requirements.txt
+          pip install -r services/anomaly-detection/requirements.txt
+          pip install -r services/predictive-maintenance/requirements.txt
+          pip install -r services/digital-twin-api/requirements.txt
+      - name: Run tests
+        run: |
+          pytest simulator/tests -v
+          pytest services/anomaly-detection/tests -v
+          pytest services/predictive-maintenance/tests -v
+          pytest services/digital-twin-api/tests -v
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Trivy (filesystem scan)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: fs
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+      - name: Checkov (Terraform)
+        uses: bridgecrewio/checkov-action@v12
+        with:
+          directory: terraform
+
+  build:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build images
+        run: |
+          echo "Build and push images to ECR (placeholder)"

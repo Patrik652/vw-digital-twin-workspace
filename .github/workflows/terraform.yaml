@@ -1,0 +1,27 @@
+name: Terraform
+
+on:
+  push:
+    paths:
+      - 'terraform/**'
+  pull_request:
+    paths:
+      - 'terraform/**'
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Terraform fmt
+        run: echo "terraform fmt -recursive terraform"
+      - name: Terraform plan
+        run: echo "terraform plan (placeholder)"
+
+  apply:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Terraform apply
+        run: echo "terraform apply (placeholder)"

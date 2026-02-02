@@ -1,0 +1,20 @@
+name: CD-Prod
+
+on:
+  release:
+    types: [ published ]
+
+jobs:
+  approve:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Manual approval
+        run: echo "Manual approval required"
+
+  deploy:
+    needs: approve
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy to prod
+        run: echo "helm upgrade --install digital-twin kubernetes/charts/digital-twin -f values-prod.yaml"

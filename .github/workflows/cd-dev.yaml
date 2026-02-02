@@ -1,0 +1,15 @@
+name: CD-Dev
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure AWS credentials
+        run: echo "Configure AWS credentials (placeholder)"
+      - name: Deploy to dev
+        run: echo "helm upgrade --install digital-twin kubernetes/charts/digital-twin -f values-dev.yaml"
