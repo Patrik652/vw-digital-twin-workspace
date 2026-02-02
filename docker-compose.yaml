@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  broker:
+    image: eclipse-mosquitto:2
+    ports:
+      - "1883:1883"
+
+  simulator:
+    build: ./simulator
+    environment:
+      MQTT_BROKER: broker
+      MQTT_PORT: "1883"
+    depends_on:
+      - broker
+
+  anomaly-detection:
+    build: ./services/anomaly-detection
+    ports:
+      - "8001:8000"
+
+  predictive-maintenance:
+    build: ./services/predictive-maintenance
+    ports:
+      - "8002:8000"
+
+  digital-twin-api:
+    build: ./services/digital-twin-api
+    ports:
+      - "8000:8000"
