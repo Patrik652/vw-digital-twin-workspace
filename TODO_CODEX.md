@@ -1,46 +1,46 @@
 # Codex TODO List - CNC Digital Twin
 
 ## Phase 1: CNC Simulator
-- [ ] Task 2: CNC Machine Core Class
-  - [ ] cnc_machine.py - Main machine class
-  - [ ] spindle.py - Spindle dynamics with thermal modeling
+- [x] Task 2: CNC Machine Core Class
+  - [x] cnc_machine.py - Main machine class
+  - [x] spindle.py - Spindle dynamics with thermal modeling
   - [ ] axes.py - X, Y, Z axis simulation
   - [ ] tool_manager.py - Tool wear using Taylor's equation
-  - [ ] config.py - Configuration management
-  - [ ] models.py - Pydantic data models
-- [ ] Task 3: MQTT Publisher
-  - [ ] mqtt_publisher.py - Async MQTT client
-  - [ ] TLS support for AWS IoT
-- [ ] Task 4: G-code Parser
-  - [ ] gcode_parser.py - FANUC-style parser
-  - [ ] Sample G-code programs
-- [ ] Task 5: Failure Modes
-  - [ ] failure_modes.py - Failure injection system
-  - [ ] 5 failure types implemented
-- [ ] Task 6: Docker
-  - [ ] Dockerfile
-  - [ ] docker-compose.yaml for local testing
+  - [x] config.py - Configuration management
+  - [x] models.py - Pydantic data models
+- [x] Task 3: MQTT Publisher
+  - [x] mqtt_publisher.py - Async MQTT client
+  - [x] TLS support for AWS IoT
+- [x] Task 4: G-code Parser
+  - [x] gcode_parser.py - FANUC-style parser
+  - [x] Sample G-code programs
+- [x] Task 5: Failure Modes
+  - [x] failure_modes.py - Failure injection system
+  - [x] 5 failure types implemented
+- [x] Task 6: Docker
+  - [x] Dockerfile
+  - [x] docker-compose.yaml for local testing
 
 ## Phase 3: Microservices
-- [ ] Task 12: Anomaly Detection
-  - [ ] Statistical detection (Z-score)
-  - [ ] ML detection (Isolation Forest)
-  - [ ] Rule-based detection
-  - [ ] FastAPI endpoints
-  - [ ] Dockerfile
-- [ ] Task 13: Predictive Maintenance
-  - [ ] Tool RUL prediction
-  - [ ] Spindle health assessment
-  - [ ] Maintenance scheduling
-  - [ ] FastAPI endpoints
-  - [ ] Dockerfile
-- [ ] Task 14: Digital Twin API
-  - [ ] REST endpoints
-  - [ ] WebSocket for real-time data
-  - [ ] Authentication
-  - [ ] Dockerfile
+- [x] Task 12: Anomaly Detection
+  - [x] Statistical detection (Z-score)
+  - [x] ML detection (Isolation Forest)
+  - [x] Rule-based detection
+  - [x] FastAPI endpoints
+  - [x] Dockerfile
+- [x] Task 13: Predictive Maintenance
+  - [x] Tool RUL prediction
+  - [x] Spindle health assessment
+  - [x] Maintenance scheduling
+  - [x] FastAPI endpoints
+  - [x] Dockerfile
+- [x] Task 14: Digital Twin API
+  - [x] REST endpoints
+  - [x] WebSocket for real-time data
+  - [x] Authentication
+  - [x] Dockerfile
 
 ## Current Status
 - Started: 2026-02-01
-- Current Task: Task 2
+- Current Task: Final verification
 - Blockers: None
