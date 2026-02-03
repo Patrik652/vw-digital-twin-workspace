@@ -89,6 +89,20 @@ async def get_telemetry(machine_id: str, x_api_key: str | None = Header(default=
     return _success(latest)
 
 
+@app.post("/machines/{machine_id}/telemetry")
+async def ingest_telemetry(
+    machine_id: str, telemetry: Telemetry, x_api_key: str | None = Header(default=None)
+) -> SuccessResponse:
+    key = _require_key(x_api_key)
+    _rate_limit(key)
+    if telemetry.machine_id != machine_id:
+        raise HTTPException(status_code=400, detail="Machine ID mismatch")
+    if not store.get_machine(machine_id):
+        store.add_machine(Machine(id=machine_id, name=machine_id, location="demo"))
+    store.add_telemetry(telemetry)
+    return _success(telemetry)
+
+
 @app.get("/machines/{machine_id}/history")
 async def get_history(machine_id: str, x_api_key: str | None = Header(default=None)) -> SuccessResponse:
     key = _require_key(x_api_key)
