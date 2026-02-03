@@ -138,5 +138,5 @@ async def telemetry_ws(websocket: WebSocket, machine_id: str) -> None:
     await websocket.accept()
     latest = store.latest_telemetry(machine_id)
     if latest:
-        await websocket.send_json(latest.model_dump())
+        await websocket.send_json(latest.model_dump(mode="json"))
     await websocket.close()
