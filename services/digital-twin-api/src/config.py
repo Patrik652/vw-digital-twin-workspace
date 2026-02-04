@@ -10,7 +10,9 @@ from dataclasses import dataclass
 class ApiConfig:
     """API configuration values."""
 
-    api_keys: list[str] = tuple(filter(None, os.getenv("API_KEYS", "dev-key").split(",")))  # type: ignore[assignment]
+    api_keys: list[str] = tuple(  # type: ignore[assignment]
+        filter(None, os.getenv("API_KEYS", "dev-key").split(","))
+    )
     rate_limit_per_min: int = int(os.getenv("RATE_LIMIT_PER_MIN", "100"))
     alerting_service_url: str = os.getenv(
         "ALERTING_SERVICE_URL", "http://alerting-service:8000"
