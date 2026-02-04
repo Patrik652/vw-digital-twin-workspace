@@ -6,6 +6,8 @@ A CNC machine digital twin demo built for a Volkswagen Group Services applicatio
 
 ![CNC Digital Twin Demo](demo/vw-digital-twin-demo.gif)
 
+[Download full quality video (MP4)](demo/vw-digital-twin-full-demo.mp4)
+
 ## Architecture
 
 - **Simulator** produces telemetry and publishes over MQTT.
