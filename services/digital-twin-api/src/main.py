@@ -6,11 +6,15 @@ import uuid
 from datetime import datetime, timezone
 from typing import Any, Dict, List
 
-from fastapi import Depends, FastAPI, Header, HTTPException, WebSocket
+import httpx
+from fastapi import FastAPI, Header, HTTPException, WebSocket
 
 from auth import verify_api_key
+from config import ApiConfig
 from models import (
     AnomalyRecord,
+    AggregateRequest,
+    AlertRequest,
     CommandRequest,
     ErrorDetail,
     ErrorResponse,
@@ -22,12 +26,15 @@ from models import (
     Telemetry,
 )
 from rate_limit import TokenBucket
+from service_client import ServiceClient
 from store import InMemoryStore
 
 app = FastAPI(title="Digital Twin API", version="0.1.0")
 
 store = InMemoryStore()
 rate_limiters: Dict[str, TokenBucket] = {}
+config = ApiConfig()
+service_client = ServiceClient(config=config)
 
 
 def _require_key(x_api_key: str | None) -> str:
@@ -100,6 +107,7 @@ async def ingest_telemetry(
     if not store.get_machine(machine_id):
         store.add_machine(Machine(id=machine_id, name=machine_id, location="demo"))
     store.add_telemetry(telemetry)
+    await _dispatch_telemetry_alerts(telemetry)
     return _success(telemetry)
 
 
@@ -133,6 +141,39 @@ async def get_anomalies(machine_id: str, x_api_key: str | None = Header(default=
     return _success(store.list_anomalies(machine_id))
 
 
+@app.post("/machines/{machine_id}/alerts")
+async def send_alert(
+    machine_id: str, alert: AlertRequest, x_api_key: str | None = Header(default=None)
+) -> SuccessResponse:
+    key = _require_key(x_api_key)
+    _rate_limit(key)
+    payload = await service_client.send_alert(
+        machine_id=machine_id,
+        severity=_normalize_severity(alert.severity),
+        message=alert.message,
+        metric=alert.metric,
+        value=alert.value,
+        source=alert.source,
+    )
+    return _success(payload)
+
+
+@app.post("/machines/{machine_id}/aggregate")
+async def aggregate_machine(
+    machine_id: str, req: AggregateRequest, x_api_key: str | None = Header(default=None)
+) -> SuccessResponse:
+    key = _require_key(x_api_key)
+    _rate_limit(key)
+    history = store.history(machine_id)
+    payload = await service_client.aggregate(
+        machine_id=machine_id,
+        points=history,
+        metric=req.metric,
+        windows=_normalize_windows(req),
+    )
+    return _success(payload)
+
+
 @app.websocket("/ws/machines/{machine_id}/telemetry")
 async def telemetry_ws(websocket: WebSocket, machine_id: str) -> None:
     await websocket.accept()
@@ -140,3 +181,38 @@ async def telemetry_ws(websocket: WebSocket, machine_id: str) -> None:
     if latest:
         await websocket.send_json(latest.model_dump(mode="json"))
     await websocket.close()
+
+
+async def _dispatch_telemetry_alerts(telemetry: Telemetry) -> None:
+    spindle = telemetry.data.get("spindle", {})
+    temperature = spindle.get("temperature_c")
+    if not isinstance(temperature, (int, float)):
+        return
+    if float(temperature) < config.critical_spindle_temp_c:
+        return
+
+    try:
+        await service_client.send_alert(
+            machine_id=telemetry.machine_id,
+            severity="critical",
+            message="Spindle temperature crossed critical threshold",
+            metric="spindle.temperature_c",
+            value=float(temperature),
+            source="digital-twin-api",
+        )
+    except httpx.HTTPError:
+        # Alerts are best-effort; ingestion should still succeed.
+        pass
+
+
+def _normalize_severity(severity: str) -> str:
+    if severity == "warning":
+        return "medium"
+    return severity
+
+
+def _normalize_windows(req: AggregateRequest) -> List[str]:
+    if req.window_minutes is None:
+        return req.windows
+    mapping = {1: "1min", 5: "5min", 60: "1hour"}
+    return [mapping[req.window_minutes]]

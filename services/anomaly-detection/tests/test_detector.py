@@ -1,24 +1,42 @@
-import sys
-from pathlib import Path
-
 import pytest
 
-SRC_DIR = Path(__file__).resolve().parents[1] / "src"
-sys.path.append(str(SRC_DIR))
 
-
-def test_rule_based_flags_overheat():
+def test_zscore_detection():
     try:
+        from config import DetectorConfig
         from detector import Detector
-    except Exception as exc:  # pragma: no cover - intentional for red phase
+    except Exception as exc:  # pragma: no cover - import safety
         pytest.fail(f"Detector import failed: {exc}")
+
+    det = Detector(config=DetectorConfig(window_size=10, zscore_threshold=2.0))
+
+    for _ in range(9):
+        assert det.detect_zscore("spindle.temperature_c", 40.0, "CNC-001") == []
+
+    anomalies = det.detect_zscore("spindle.temperature_c", 100.0, "CNC-001")
+
+    assert anomalies
+    assert anomalies[0].detector == "zscore"
+
+
+def test_rule_based_detection():
+    from detector import Detector
 
     det = Detector()
     telemetry = {
         "machine_id": "CNC-001",
-        "spindle": {"temperature_c": 75, "rpm": 12000, "vibration_mm_s": 0.5},
-        "tool": {"wear_percent": 10},
-        "coolant": {"flow_rate_lpm": 5},
+        "spindle": {
+            "temperature_c": 75,
+            "rpm": 12000,
+            "vibration_mm_s": 7,
+        },
+        "tool": {"wear_percent": 85},
+        "coolant": {"flow_rate_lpm": 1.0},
     }
+
     anomalies = det.detect_rule_based(telemetry)
+
     assert anomalies
+    metrics = {anomaly.metric for anomaly in anomalies}
+    assert "spindle.temperature_c" in metrics
+    assert "tool.wear_percent" in metrics

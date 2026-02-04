@@ -20,6 +20,8 @@ pip install -r simulator/requirements.txt
 pip install -r services/anomaly-detection/requirements.txt
 pip install -r services/predictive-maintenance/requirements.txt
 pip install -r services/digital-twin-api/requirements.txt
+pip install -r services/alerting-service/requirements.txt
+pip install -r services/data-aggregator/requirements.txt
 pytest
 ```
 
@@ -29,7 +31,7 @@ pytest
 docker compose up --build
 ```
 
-This starts the MQTT broker, simulator, and three API services on ports 8000-8002.
+This starts the MQTT broker, simulator, and five API services on ports 8000-8004.
 
 ## Simulator
 
@@ -51,6 +53,20 @@ Environment variables:
 
 ## Services
 
+- **Digital Twin API**: `http://localhost:8000`
+- **Anomaly Detection**: `http://localhost:8001`
+- **Predictive Maintenance**: `http://localhost:8002`
+- **Alerting Service**: `http://localhost:8003`
+- **Data Aggregator**: `http://localhost:8004`
+
+### Digital Twin API integration settings
+
+Configure `digital-twin-api` forwarding via environment variables:
+
+- `ALERTING_SERVICE_URL` default: `http://alerting-service:8000`
+- `DATA_AGGREGATOR_URL` default: `http://data-aggregator:8000`
+- `CRITICAL_SPINDLE_TEMP_C` default: `90`
+- `SERVICE_TIMEOUT_S` default: `3`
 
 ## Demo Steps
 
@@ -66,9 +82,51 @@ docker compose up --build
 curl http://localhost:8000/health
 curl http://localhost:8001/health
 curl http://localhost:8002/health
+curl http://localhost:8003/health
+curl http://localhost:8004/health
 ```
 
-3. (Optional) Connect to the WebSocket:
+3. Ingest telemetry through Digital Twin API (auto-alert when spindle temperature is critical):
+
+```bash
+curl -X POST http://localhost:8000/machines/CNC-001/telemetry \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: dev-key" \
+  -d '{"timestamp":"2026-02-04T06:40:00Z","machine_id":"CNC-001","data":{"spindle":{"temperature_c":95.0}}}'
+```
+
+4. Request aggregated rollup through Digital Twin API (forwarded to data-aggregator):
+
+```bash
+curl -X POST http://localhost:8000/machines/CNC-001/aggregate \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: dev-key" \
+  -d '{"metric":"spindle.temperature_c","windows":["1min","5min"]}'
+```
+
+5. Send explicit alert through Digital Twin API (forwarded to alerting-service):
+
+```bash
+curl -X POST http://localhost:8000/machines/CNC-001/alerts \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: dev-key" \
+  -d '{"severity":"high","message":"Manual test alert","metric":"spindle.temperature_c","value":95.0}'
+```
+
+Backward compatibility:
+- `severity: "warning"` is accepted and internally mapped to `medium`.
+- `window_minutes` is accepted only as `1`, `5`, or `60` and mapped to `["1min"]`, `["5min"]`, or `["1hour"]`.
+
+Validation example (unsupported `window_minutes` returns `422`):
+
+```bash
+curl -X POST http://localhost:8000/machines/CNC-001/aggregate \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: dev-key" \
+  -d '{"window_minutes":7}'
+```
+
+6. (Optional) Connect to the WebSocket:
 
 ```bash
 # Example using wscat
@@ -78,6 +136,8 @@ wscat -c ws://localhost:8000/ws/machines/CNC-001/telemetry
 - **Anomaly Detection**: `http://localhost:8001/health`
 - **Predictive Maintenance**: `http://localhost:8002/health`
 - **Digital Twin API**: `http://localhost:8000/health`
+- **Alerting Service**: `http://localhost:8003/health`
+- **Data Aggregator**: `http://localhost:8004/health`
 - **Digital Twin WebSocket**: `ws://localhost:8000/ws/machines/{machine_id}/telemetry`
 
 ## Testing

@@ -83,3 +83,21 @@ class AnomalyRecord(BaseModel):
 
     machine_id: str
     payload: Dict[str, Any]
+
+
+class AlertRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    severity: Literal["low", "medium", "high", "critical", "warning"]
+    message: str
+    source: str = "digital-twin-api"
+    metric: Optional[str] = None
+    value: Optional[float] = None
+
+
+class AggregateRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    metric: str = "spindle.temperature_c"
+    windows: List[Literal["1min", "5min", "1hour"]] = Field(default_factory=lambda: ["1min"])
+    window_minutes: Optional[Literal[1, 5, 60]] = None
