@@ -16,7 +16,9 @@ MODULES = ("config", "models", "main", "alerter")
 
 
 def _remove_src_path() -> None:
-    src_paths = [ROOT_DIR / "simulator" / "src"] + list((ROOT_DIR / "services").glob("*/src"))
+    src_paths = [ROOT_DIR / "simulator" / "src"] + list(
+        (ROOT_DIR / "services").glob("*/src")
+    )
     for candidate in src_paths:
         cand_str = str(candidate)
         while cand_str in sys.path:

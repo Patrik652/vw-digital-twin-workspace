@@ -14,5 +14,7 @@ def test_rul_decreases_with_wear():
         pytest.fail(f"Predictor import failed: {exc}")
 
     low = predict_tool_rul(wear_percent=10, runtime_minutes=50, cutting_speed_m_min=150)
-    high = predict_tool_rul(wear_percent=80, runtime_minutes=50, cutting_speed_m_min=150)
+    high = predict_tool_rul(
+        wear_percent=80, runtime_minutes=50, cutting_speed_m_min=150
+    )
     assert high.minutes_remaining < low.minutes_remaining

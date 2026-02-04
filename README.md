@@ -2,6 +2,10 @@
 
 A CNC machine digital twin demo built for a Volkswagen Group Services application. It includes a physics-inspired simulator, anomaly detection, predictive maintenance, and a digital twin API.
 
+## Demo Video
+
+https://github.com/Patrik652/vw-digital-twin-workspace/raw/main/demo/vw-digital-twin-full-demo.mp4
+
 ## Architecture
 
 - **Simulator** produces telemetry and publishes over MQTT.

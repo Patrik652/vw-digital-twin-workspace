@@ -37,7 +37,9 @@ class MQTTPublisher:
         self.client = self.client_factory()
 
         if self.use_tls:
-            self.client.tls_set(ca_certs=self.ca_path, certfile=self.cert_path, keyfile=self.key_path)
+            self.client.tls_set(
+                ca_certs=self.ca_path, certfile=self.cert_path, keyfile=self.key_path
+            )
 
     @property
     def topic(self) -> str:

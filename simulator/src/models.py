@@ -5,7 +5,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from typing import Literal
 
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class SpindleTelemetry(BaseModel):
@@ -102,14 +102,26 @@ class Telemetry(BaseModel):
         return cls(
             timestamp=datetime.now(timezone.utc),
             machine_id="CNC-001",
-            spindle=SpindleTelemetry(rpm=12000, load_percent=45.2, temperature_c=38.5, vibration_mm_s=0.8),
+            spindle=SpindleTelemetry(
+                rpm=12000, load_percent=45.2, temperature_c=38.5, vibration_mm_s=0.8
+            ),
             axes=AxesTelemetry(
                 x=AxisState(position_mm=150.234, velocity_mm_min=5000),
                 y=AxisState(position_mm=75.891, velocity_mm_min=5000),
                 z=AxisState(position_mm=-25.5, velocity_mm_min=2000),
             ),
-            tool=ToolTelemetry(id="T01", type="end_mill", diameter_mm=10, wear_percent=23.5, runtime_minutes=145),
-            coolant=CoolantTelemetry(flow_rate_lpm=12.5, temperature_c=22.3, pressure_bar=4.2),
+            tool=ToolTelemetry(
+                id="T01",
+                type="end_mill",
+                diameter_mm=10,
+                wear_percent=23.5,
+                runtime_minutes=145,
+            ),
+            coolant=CoolantTelemetry(
+                flow_rate_lpm=12.5, temperature_c=22.3, pressure_bar=4.2
+            ),
             power=PowerTelemetry(total_kw=8.5, spindle_kw=5.2, servo_kw=2.8),
-            status=StatusTelemetry(mode="AUTO", program="O1234", block="N0150", cycle_time_s=234),
+            status=StatusTelemetry(
+                mode="AUTO", program="O1234", block="N0150", cycle_time_s=234
+            ),
         )

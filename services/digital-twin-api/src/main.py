@@ -7,24 +7,13 @@ from datetime import datetime, timezone
 from typing import Any, Dict, List
 
 import httpx
-from fastapi import FastAPI, Header, HTTPException, WebSocket
-
 from auth import verify_api_key
 from config import ApiConfig
-from models import (
-    AnomalyRecord,
-    AggregateRequest,
-    AlertRequest,
-    CommandRequest,
-    ErrorDetail,
-    ErrorResponse,
-    Machine,
-    MachineStatus,
-    PredictionRecord,
-    ResponseMetadata,
-    SuccessResponse,
-    Telemetry,
-)
+from fastapi import FastAPI, Header, HTTPException, WebSocket
+from models import (AggregateRequest, AlertRequest, AnomalyRecord,
+                    CommandRequest, ErrorDetail, ErrorResponse, Machine,
+                    MachineStatus, PredictionRecord, ResponseMetadata,
+                    SuccessResponse, Telemetry)
 from rate_limit import TokenBucket
 from service_client import ServiceClient
 from store import InMemoryStore
@@ -44,13 +33,17 @@ def _require_key(x_api_key: str | None) -> str:
 
 
 def _rate_limit(key: str) -> None:
-    bucket = rate_limiters.setdefault(key, TokenBucket(capacity=100, refill_per_sec=100 / 60))
+    bucket = rate_limiters.setdefault(
+        key, TokenBucket(capacity=100, refill_per_sec=100 / 60)
+    )
     if not bucket.allow():
         raise HTTPException(status_code=429, detail="Rate limit exceeded")
 
 
 def _success(data: Any) -> SuccessResponse:
-    return SuccessResponse(data=data, metadata=ResponseMetadata(request_id=str(uuid.uuid4())))
+    return SuccessResponse(
+        data=data, metadata=ResponseMetadata(request_id=str(uuid.uuid4()))
+    )
 
 
 @app.get("/health")
@@ -64,14 +57,18 @@ async def ready() -> dict:
 
 
 @app.get("/machines")
-async def list_machines(x_api_key: str | None = Header(default=None)) -> SuccessResponse:
+async def list_machines(
+    x_api_key: str | None = Header(default=None),
+) -> SuccessResponse:
     key = _require_key(x_api_key)
     _rate_limit(key)
     return _success(store.list_machines())
 
 
 @app.get("/machines/{machine_id}")
-async def get_machine(machine_id: str, x_api_key: str | None = Header(default=None)) -> SuccessResponse:
+async def get_machine(
+    machine_id: str, x_api_key: str | None = Header(default=None)
+) -> SuccessResponse:
     key = _require_key(x_api_key)
     _rate_limit(key)
     machine = store.get_machine(machine_id)
@@ -81,7 +78,9 @@ async def get_machine(machine_id: str, x_api_key: str | None = Header(default=No
 
 
 @app.get("/machines/{machine_id}/status")
-async def get_status(machine_id: str, x_api_key: str | None = Header(default=None)) -> SuccessResponse:
+async def get_status(
+    machine_id: str, x_api_key: str | None = Header(default=None)
+) -> SuccessResponse:
     key = _require_key(x_api_key)
     _rate_limit(key)
     status = MachineStatus()
@@ -89,7 +88,9 @@ async def get_status(machine_id: str, x_api_key: str | None = Header(default=Non
 
 
 @app.get("/machines/{machine_id}/telemetry")
-async def get_telemetry(machine_id: str, x_api_key: str | None = Header(default=None)) -> SuccessResponse:
+async def get_telemetry(
+    machine_id: str, x_api_key: str | None = Header(default=None)
+) -> SuccessResponse:
     key = _require_key(x_api_key)
     _rate_limit(key)
     latest = store.latest_telemetry(machine_id)
@@ -112,7 +113,9 @@ async def ingest_telemetry(
 
 
 @app.get("/machines/{machine_id}/history")
-async def get_history(machine_id: str, x_api_key: str | None = Header(default=None)) -> SuccessResponse:
+async def get_history(
+    machine_id: str, x_api_key: str | None = Header(default=None)
+) -> SuccessResponse:
     key = _require_key(x_api_key)
     _rate_limit(key)
     return _success(store.history(machine_id))
@@ -120,22 +123,30 @@ async def get_history(machine_id: str, x_api_key: str | None = Header(default=No
 
 @app.post("/machines/{machine_id}/commands")
 async def send_command(
-    machine_id: str, command: CommandRequest, x_api_key: str | None = Header(default=None)
+    machine_id: str,
+    command: CommandRequest,
+    x_api_key: str | None = Header(default=None),
 ) -> SuccessResponse:
     key = _require_key(x_api_key)
     _rate_limit(key)
-    return _success({"machine_id": machine_id, "command": command.command, "params": command.params})
+    return _success(
+        {"machine_id": machine_id, "command": command.command, "params": command.params}
+    )
 
 
 @app.get("/predictions/{machine_id}")
-async def get_predictions(machine_id: str, x_api_key: str | None = Header(default=None)) -> SuccessResponse:
+async def get_predictions(
+    machine_id: str, x_api_key: str | None = Header(default=None)
+) -> SuccessResponse:
     key = _require_key(x_api_key)
     _rate_limit(key)
     return _success(store.list_predictions(machine_id))
 
 
 @app.get("/anomalies/{machine_id}")
-async def get_anomalies(machine_id: str, x_api_key: str | None = Header(default=None)) -> SuccessResponse:
+async def get_anomalies(
+    machine_id: str, x_api_key: str | None = Header(default=None)
+) -> SuccessResponse:
     key = _require_key(x_api_key)
     _rate_limit(key)
     return _success(store.list_anomalies(machine_id))

@@ -17,13 +17,19 @@ _WINDOW_TO_SECONDS = {
 class DataAggregator:
     """Build fixed-window rollups from metric points."""
 
-    def aggregate(self, points: list[MetricPoint], windows: list[Window]) -> list[AggregateBucket]:
-        grouped: dict[tuple[str, str, Window, datetime], list[float]] = defaultdict(list)
+    def aggregate(
+        self, points: list[MetricPoint], windows: list[Window]
+    ) -> list[AggregateBucket]:
+        grouped: dict[tuple[str, str, Window, datetime], list[float]] = defaultdict(
+            list
+        )
 
         for point in points:
             for window in windows:
                 bucket_start = self._bucket_start(point.timestamp, window)
-                grouped[(point.machine_id, point.metric, window, bucket_start)].append(point.value)
+                grouped[(point.machine_id, point.metric, window, bucket_start)].append(
+                    point.value
+                )
 
         buckets: list[AggregateBucket] = []
         for (machine_id, metric, window, bucket_start), values in grouped.items():

@@ -6,7 +6,6 @@ from datetime import datetime
 from typing import Any
 
 import httpx
-
 from config import ApiConfig
 from models import Telemetry
 
@@ -36,7 +35,9 @@ class ServiceClient:
             "value": value,
         }
         async with httpx.AsyncClient(timeout=self._config.service_timeout_s) as client:
-            response = await client.post(f"{self._config.alerting_service_url}/alerts", json=payload)
+            response = await client.post(
+                f"{self._config.alerting_service_url}/alerts", json=payload
+            )
             response.raise_for_status()
             return response.json()
 
@@ -64,7 +65,9 @@ class ServiceClient:
 
         payload = {"points": telemetry_points, "windows": windows}
         async with httpx.AsyncClient(timeout=self._config.service_timeout_s) as client:
-            response = await client.post(f"{self._config.data_aggregator_url}/aggregate", json=payload)
+            response = await client.post(
+                f"{self._config.data_aggregator_url}/aggregate", json=payload
+            )
             response.raise_for_status()
             return response.json()
 

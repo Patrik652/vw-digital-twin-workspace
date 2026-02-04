@@ -3,22 +3,15 @@
 from __future__ import annotations
 
 import asyncio
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
 import random
 import time
+from dataclasses import dataclass, field
+from datetime import datetime, timezone
 
 from config import SimulatorConfig
-from models import (
-    AxesTelemetry,
-    AxisState,
-    CoolantTelemetry,
-    PowerTelemetry,
-    SpindleTelemetry,
-    StatusTelemetry,
-    Telemetry,
-    ToolTelemetry,
-)
+from models import (AxesTelemetry, AxisState, CoolantTelemetry, PowerTelemetry,
+                    SpindleTelemetry, StatusTelemetry, Telemetry,
+                    ToolTelemetry)
 from spindle import Spindle
 
 
@@ -80,7 +73,9 @@ class CNCMachine:
             return
         self._tool_runtime_minutes += delta_s / 60.0
         wear_rate_per_min = 0.05  # conservative demo rate
-        self._tool_wear_percent = min(100.0, self._tool_wear_percent + wear_rate_per_min * (delta_s / 60.0))
+        self._tool_wear_percent = min(
+            100.0, self._tool_wear_percent + wear_rate_per_min * (delta_s / 60.0)
+        )
 
     def _elapsed_since_last_cycle(self) -> float:
         now = time.monotonic()
@@ -109,14 +104,18 @@ class CNCMachine:
         axes = AxesTelemetry(
             x=AxisState(position_mm=random.uniform(0, 250), velocity_mm_min=feed),
             y=AxisState(position_mm=random.uniform(0, 250), velocity_mm_min=feed),
-            z=AxisState(position_mm=random.uniform(-100, 0), velocity_mm_min=feed / 2.0),
+            z=AxisState(
+                position_mm=random.uniform(-100, 0), velocity_mm_min=feed / 2.0
+            ),
         )
 
         spindle = SpindleTelemetry(
             rpm=rpm,
             load_percent=load_percent,
             temperature_c=random.uniform(25.0, 60.0),
-            vibration_mm_s=self.spindle.vibration_mm_s(wear_percent=self._tool_wear_percent),
+            vibration_mm_s=self.spindle.vibration_mm_s(
+                wear_percent=self._tool_wear_percent
+            ),
         )
 
         tool = ToolTelemetry(
@@ -133,7 +132,9 @@ class CNCMachine:
             pressure_bar=4.0 if rpm > 0 else 0.0,
         )
 
-        power = PowerTelemetry(total_kw=total_kw, spindle_kw=spindle_kw, servo_kw=servo_kw)
+        power = PowerTelemetry(
+            total_kw=total_kw, spindle_kw=spindle_kw, servo_kw=servo_kw
+        )
 
         status = StatusTelemetry(
             mode="AUTO",

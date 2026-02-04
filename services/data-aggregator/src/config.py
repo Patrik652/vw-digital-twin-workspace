@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 import os
+from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
 class AggregatorConfig:
     """Runtime configuration for rollup windows."""
 
-    default_windows: tuple[str, ...] = tuple(os.getenv("AGGREGATION_WINDOWS", "1min,5min,1hour").split(","))
+    default_windows: tuple[str, ...] = tuple(
+        os.getenv("AGGREGATION_WINDOWS", "1min,5min,1hour").split(",")
+    )

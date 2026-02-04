@@ -5,16 +5,11 @@ from __future__ import annotations
 from typing import List
 
 from fastapi import FastAPI
-
-from models import (
-    MaintenanceScheduleResponse,
-    PredictionRecord,
-    SpindleHealthRequest,
-    SpindleHealthResponse,
-    ToolRULRequest,
-    ToolRULResponse,
-)
-from predictor import build_maintenance_schedule, predict_spindle_health, predict_tool_rul
+from models import (MaintenanceScheduleResponse, PredictionRecord,
+                    SpindleHealthRequest, SpindleHealthResponse,
+                    ToolRULRequest, ToolRULResponse)
+from predictor import (build_maintenance_schedule, predict_spindle_health,
+                       predict_tool_rul)
 
 app = FastAPI(title="Predictive Maintenance Service", version="0.1.0")
 
@@ -39,7 +34,13 @@ async def predict_tool(req: ToolRULRequest) -> ToolRULResponse:
         cutting_speed_m_min=req.cutting_speed_m_min,
         machine_id=req.machine_id,
     )
-    _recent_predictions.append(PredictionRecord(machine_id=req.machine_id, result_type="tool_rul", payload=result.model_dump()))
+    _recent_predictions.append(
+        PredictionRecord(
+            machine_id=req.machine_id,
+            result_type="tool_rul",
+            payload=result.model_dump(),
+        )
+    )
     return result
 
 
@@ -52,7 +53,11 @@ async def predict_spindle(req: SpindleHealthRequest) -> SpindleHealthResponse:
         trend_slope=req.trend_slope,
     )
     _recent_predictions.append(
-        PredictionRecord(machine_id=req.machine_id, result_type="spindle_health", payload=result.model_dump())
+        PredictionRecord(
+            machine_id=req.machine_id,
+            result_type="spindle_health",
+            payload=result.model_dump(),
+        )
     )
     return result
 
@@ -73,7 +78,11 @@ async def predict_schedule(req: ToolRULRequest) -> MaintenanceScheduleResponse:
     )
     schedule = build_maintenance_schedule(req.machine_id, tool_rul, spindle)
     _recent_predictions.append(
-        PredictionRecord(machine_id=req.machine_id, result_type="maintenance_schedule", payload=schedule.model_dump())
+        PredictionRecord(
+            machine_id=req.machine_id,
+            result_type="maintenance_schedule",
+            payload=schedule.model_dump(),
+        )
     )
     return schedule
 

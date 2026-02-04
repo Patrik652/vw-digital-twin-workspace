@@ -7,7 +7,6 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-
 Window = Literal["1min", "5min", "1hour"]
 
 

@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
+import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Dict, List
-import uuid
 
 
 @dataclass
@@ -42,7 +42,10 @@ class SpindleBearingDegradation(FailureMode):
         self.name = "SPINDLE_BEARING_DEGRADATION"
 
     def get_impact(self) -> Dict[str, float]:
-        return {"vibration_multiplier": 1.0 + 2.0 * self.severity, "temp_offset_c": 5.0 * self.severity}
+        return {
+            "vibration_multiplier": 1.0 + 2.0 * self.severity,
+            "temp_offset_c": 5.0 * self.severity,
+        }
 
 
 @dataclass
@@ -51,7 +54,10 @@ class CoolantSystemFailure(FailureMode):
         self.name = "COOLANT_SYSTEM_FAILURE"
 
     def get_impact(self) -> Dict[str, float]:
-        return {"coolant_flow_multiplier": 1.0 - 0.7 * self.severity, "temp_offset_c": 3.0 * self.severity}
+        return {
+            "coolant_flow_multiplier": 1.0 - 0.7 * self.severity,
+            "temp_offset_c": 3.0 * self.severity,
+        }
 
 
 @dataclass

@@ -2,10 +2,9 @@
 
 from __future__ import annotations
 
-from fastapi import FastAPI
-
 from alerter import Alerter
 from config import AlertingConfig
+from fastapi import FastAPI
 from models import AlertRequest, AlertResponse
 
 app = FastAPI(title="Alerting Service", version="0.1.0")

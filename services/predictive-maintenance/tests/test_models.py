@@ -13,5 +13,10 @@ def test_tool_rul_request_fields():
     except Exception as exc:  # pragma: no cover - intentional for red phase
         pytest.fail(f"Models import failed: {exc}")
 
-    req = ToolRULRequest(machine_id="CNC-001", wear_percent=50, runtime_minutes=120, cutting_speed_m_min=200)
+    req = ToolRULRequest(
+        machine_id="CNC-001",
+        wear_percent=50,
+        runtime_minutes=120,
+        cutting_speed_m_min=200,
+    )
     assert req.machine_id == "CNC-001"

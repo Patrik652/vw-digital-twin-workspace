@@ -7,10 +7,9 @@ from dataclasses import dataclass, field
 from typing import Deque, Dict, List
 
 import numpy as np
-from sklearn.ensemble import IsolationForest
-
 from config import DetectorConfig
 from models import Anomaly
+from sklearn.ensemble import IsolationForest
 
 
 @dataclass
@@ -20,7 +19,9 @@ class Detector:
     config: DetectorConfig = field(default_factory=DetectorConfig)
     _history: Dict[str, Deque[float]] = field(default_factory=dict, init=False)
     _iforest: IsolationForest = field(
-        default_factory=lambda: IsolationForest(n_estimators=100, contamination=0.02, random_state=42)
+        default_factory=lambda: IsolationForest(
+            n_estimators=100, contamination=0.02, random_state=42
+        )
     )
     _iforest_ready: bool = field(default=False, init=False)
 
@@ -71,7 +72,10 @@ class Detector:
                 )
             )
 
-        if spindle.get("rpm", 0) > self.config.rule_min_rpm_running and coolant.get("flow_rate_lpm", 0) < self.config.rule_coolant_low:
+        if (
+            spindle.get("rpm", 0) > self.config.rule_min_rpm_running
+            and coolant.get("flow_rate_lpm", 0) < self.config.rule_coolant_low
+        ):
             anomalies.append(
                 Anomaly(
                     machine_id=machine_id,
@@ -85,7 +89,9 @@ class Detector:
 
         return anomalies
 
-    def detect_zscore(self, metric: str, value: float, machine_id: str) -> List[Anomaly]:
+    def detect_zscore(
+        self, metric: str, value: float, machine_id: str
+    ) -> List[Anomaly]:
         anomalies: List[Anomaly] = []
         self._push(metric, value)
         window = self._history[metric]
@@ -115,7 +121,9 @@ class Detector:
         self._iforest.fit(features)
         self._iforest_ready = True
 
-    def detect_iforest(self, features: np.ndarray, machine_id: str, metric_label: str = "multivariate") -> List[Anomaly]:
+    def detect_iforest(
+        self, features: np.ndarray, machine_id: str, metric_label: str = "multivariate"
+    ) -> List[Anomaly]:
         if not self._iforest_ready:
             return []
         preds = self._iforest.predict(features)

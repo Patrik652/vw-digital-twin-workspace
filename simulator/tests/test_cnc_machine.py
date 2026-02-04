@@ -36,6 +36,8 @@ def test_telemetry_schema():
 
     assert telemetry["machine_id"] == "CNC-001"
     assert isinstance(telemetry["timestamp"], object)
-    assert {"rpm", "temperature_c", "vibration_mm_s"}.issubset(telemetry["spindle"].keys())
+    assert {"rpm", "temperature_c", "vibration_mm_s"}.issubset(
+        telemetry["spindle"].keys()
+    )
     assert {"wear_percent", "runtime_minutes"}.issubset(telemetry["tool"].keys())
     assert {"mode", "cycle_time_s"}.issubset(telemetry["status"].keys())

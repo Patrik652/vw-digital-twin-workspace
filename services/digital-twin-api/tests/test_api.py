@@ -1,6 +1,6 @@
 import asyncio
-from datetime import datetime, timezone
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 import pytest
@@ -28,8 +28,12 @@ def test_ingest_telemetry_stores_latest():
     except Exception as exc:  # pragma: no cover - intentional for red phase
         pytest.fail(f"API import failed: {exc}")
 
-    telemetry = Telemetry(timestamp=datetime.now(timezone.utc), machine_id="TEST-001", data={"rpm": 12000})
-    result = asyncio.run(main.ingest_telemetry("TEST-001", telemetry, x_api_key="dev-key"))
+    telemetry = Telemetry(
+        timestamp=datetime.now(timezone.utc), machine_id="TEST-001", data={"rpm": 12000}
+    )
+    result = asyncio.run(
+        main.ingest_telemetry("TEST-001", telemetry, x_api_key="dev-key")
+    )
 
     assert result.status == "success"
     latest = main.store.latest_telemetry("TEST-001")
@@ -54,7 +58,9 @@ def test_ingest_telemetry_dispatches_alert_for_overheat(monkeypatch):
         machine_id="TEST-002",
         data={"spindle": {"temperature_c": 95.0}},
     )
-    result = asyncio.run(main.ingest_telemetry("TEST-002", telemetry, x_api_key="dev-key"))
+    result = asyncio.run(
+        main.ingest_telemetry("TEST-002", telemetry, x_api_key="dev-key")
+    )
 
     assert result.status == "success"
     assert sent["machine_id"] == "TEST-002"
@@ -74,11 +80,19 @@ def test_aggregate_endpoint_uses_data_aggregator(monkeypatch):
     asyncio.run(main.ingest_telemetry("TEST-003", telemetry, x_api_key="dev-key"))
 
     async def fake_aggregate(*, machine_id, points, metric, windows):
-        return {"buckets": [{"machine_id": machine_id, "count": len(points), "window": windows[0]}]}
+        return {
+            "buckets": [
+                {"machine_id": machine_id, "count": len(points), "window": windows[0]}
+            ]
+        }
 
     monkeypatch.setattr(main.service_client, "aggregate", fake_aggregate)
 
-    response = asyncio.run(main.aggregate_machine("TEST-003", AggregateRequest(windows=["1min"]), x_api_key="dev-key"))
+    response = asyncio.run(
+        main.aggregate_machine(
+            "TEST-003", AggregateRequest(windows=["1min"]), x_api_key="dev-key"
+        )
+    )
     assert response.status == "success"
     assert response.data["buckets"][0]["machine_id"] == "TEST-003"
     assert response.data["buckets"][0]["count"] == 1
@@ -124,7 +138,9 @@ def test_aggregate_accepts_window_minutes_legacy(monkeypatch):
 
     monkeypatch.setattr(main.service_client, "aggregate", fake_aggregate)
     response = asyncio.run(
-        main.aggregate_machine("TEST-005", AggregateRequest(window_minutes=5), x_api_key="dev-key")
+        main.aggregate_machine(
+            "TEST-005", AggregateRequest(window_minutes=5), x_api_key="dev-key"
+        )
     )
 
     assert response.status == "success"

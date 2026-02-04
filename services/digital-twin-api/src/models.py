@@ -5,7 +5,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Literal, Optional
 
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class Machine(BaseModel):
@@ -99,5 +99,7 @@ class AggregateRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     metric: str = "spindle.temperature_c"
-    windows: List[Literal["1min", "5min", "1hour"]] = Field(default_factory=lambda: ["1min"])
+    windows: List[Literal["1min", "5min", "1hour"]] = Field(
+        default_factory=lambda: ["1min"]
+    )
     window_minutes: Optional[Literal[1, 5, 60]] = None

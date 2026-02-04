@@ -50,7 +50,11 @@ class Spindle:
 
         bpfo = (geom.num_balls / 2.0) * fr * (1.0 - d_over_d * cos_theta)
         bpfi = (geom.num_balls / 2.0) * fr * (1.0 + d_over_d * cos_theta)
-        bsf = (geom.pitch_diameter_mm / geom.ball_diameter_mm) * fr * (1.0 - (d_over_d * cos_theta) ** 2)
+        bsf = (
+            (geom.pitch_diameter_mm / geom.ball_diameter_mm)
+            * fr
+            * (1.0 - (d_over_d * cos_theta) ** 2)
+        )
         ftf = 0.5 * fr * (1.0 - d_over_d * cos_theta)
 
         return {"BPFO": bpfo, "BPFI": bpfi, "BSF": bsf, "FTF": ftf}

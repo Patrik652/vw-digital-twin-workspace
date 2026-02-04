@@ -5,7 +5,6 @@ from __future__ import annotations
 import logging
 
 import httpx
-
 from config import AlertingConfig
 from models import AlertRequest
 
@@ -31,8 +30,12 @@ class Alerter:
         }
 
         try:
-            async with httpx.AsyncClient(timeout=self._config.request_timeout_s) as client:
-                response = await client.post(self._config.slack_webhook_url, json=payload)
+            async with httpx.AsyncClient(
+                timeout=self._config.request_timeout_s
+            ) as client:
+                response = await client.post(
+                    self._config.slack_webhook_url, json=payload
+                )
                 response.raise_for_status()
         except httpx.HTTPError as exc:
             LOG.exception("Failed to deliver Slack alert")

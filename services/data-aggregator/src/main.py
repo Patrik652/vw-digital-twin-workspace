@@ -2,10 +2,9 @@
 
 from __future__ import annotations
 
-from fastapi import FastAPI
-
 from aggregator import DataAggregator
 from config import AggregatorConfig
+from fastapi import FastAPI
 from models import AggregateRequest, AggregateResponse
 
 app = FastAPI(title="Data Aggregator Service", version="0.1.0")
