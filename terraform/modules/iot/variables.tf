@@ -25,3 +25,8 @@ variable "model" {
   description = "Machine model."
   default     = "VMC"
 }
+
+variable "secrets_kms_key_id" {
+  type        = string
+  description = "KMS CMK ARN used to encrypt Secrets Manager secrets."
+}

@@ -18,11 +18,12 @@ resource "aws_iot_certificate" "this" {
 }
 
 resource "aws_secretsmanager_secret" "cert" {
-  name = "${var.project_name}-${var.environment}-iot-cert"
+  name       = "${var.project_name}-${var.environment}-iot-cert"
+  kms_key_id = var.secrets_kms_key_id
 }
 
 resource "aws_secretsmanager_secret_version" "cert" {
-  secret_id     = aws_secretsmanager_secret.cert.id
+  secret_id = aws_secretsmanager_secret.cert.id
   secret_string = jsonencode({
     certificate_pem = aws_iot_certificate.this.certificate_pem
     private_key     = aws_iot_certificate.this.private_key
