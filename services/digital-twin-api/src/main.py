@@ -10,10 +10,20 @@ import httpx
 from auth import verify_api_key
 from config import ApiConfig
 from fastapi import FastAPI, Header, HTTPException, WebSocket
-from models import (AggregateRequest, AlertRequest, AnomalyRecord,
-                    CommandRequest, ErrorDetail, ErrorResponse, Machine,
-                    MachineStatus, PredictionRecord, ResponseMetadata,
-                    SuccessResponse, Telemetry)
+from models import (
+    AggregateRequest,
+    AlertRequest,
+    AnomalyRecord,
+    CommandRequest,
+    ErrorDetail,
+    ErrorResponse,
+    Machine,
+    MachineStatus,
+    PredictionRecord,
+    ResponseMetadata,
+    SuccessResponse,
+    Telemetry,
+)
 from rate_limit import TokenBucket
 from service_client import ServiceClient
 from store import InMemoryStore

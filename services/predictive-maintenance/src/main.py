@@ -5,11 +5,19 @@ from __future__ import annotations
 from typing import List
 
 from fastapi import FastAPI
-from models import (MaintenanceScheduleResponse, PredictionRecord,
-                    SpindleHealthRequest, SpindleHealthResponse,
-                    ToolRULRequest, ToolRULResponse)
-from predictor import (build_maintenance_schedule, predict_spindle_health,
-                       predict_tool_rul)
+from models import (
+    MaintenanceScheduleResponse,
+    PredictionRecord,
+    SpindleHealthRequest,
+    SpindleHealthResponse,
+    ToolRULRequest,
+    ToolRULResponse,
+)
+from predictor import (
+    build_maintenance_schedule,
+    predict_spindle_health,
+    predict_tool_rul,
+)
 
 app = FastAPI(title="Predictive Maintenance Service", version="0.1.0")
 

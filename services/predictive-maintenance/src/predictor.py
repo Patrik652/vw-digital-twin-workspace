@@ -5,8 +5,12 @@ from __future__ import annotations
 from datetime import datetime, timedelta, timezone
 
 from config import PredictorConfig
-from models import (MaintenancePrediction, MaintenanceScheduleResponse,
-                    SpindleHealthResponse, ToolRULResponse)
+from models import (
+    MaintenancePrediction,
+    MaintenanceScheduleResponse,
+    SpindleHealthResponse,
+    ToolRULResponse,
+)
 
 
 def predict_tool_rul(

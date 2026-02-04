@@ -9,9 +9,16 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 
 from config import SimulatorConfig
-from models import (AxesTelemetry, AxisState, CoolantTelemetry, PowerTelemetry,
-                    SpindleTelemetry, StatusTelemetry, Telemetry,
-                    ToolTelemetry)
+from models import (
+    AxesTelemetry,
+    AxisState,
+    CoolantTelemetry,
+    PowerTelemetry,
+    SpindleTelemetry,
+    StatusTelemetry,
+    Telemetry,
+    ToolTelemetry,
+)
 from spindle import Spindle
 
 
