@@ -4,7 +4,7 @@ A CNC machine digital twin demo built for a Volkswagen Group Services applicatio
 
 ## Demo Video
 
-https://github.com/Patrik652/vw-digital-twin-workspace/raw/main/demo/vw-digital-twin-full-demo.mp4
+<video src="https://github.com/Patrik652/vw-digital-twin-workspace/raw/main/demo/vw-digital-twin-full-demo.mp4" controls width="100%"></video>
 
 ## Architecture
 
